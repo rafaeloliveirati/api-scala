@@ -3,24 +3,47 @@ package models
 import com.mongodb.casbah.Imports._
 import config.MongoFactory
 
-class User(val name: String, val email: String, val document: String, val password: String)
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
+
+class User(val name: String, val email: String, val document: String, val password: String) {
+
+  def this(mongoDBObject: MongoDBObject) {
+    this(
+      mongoDBObject.getAs[String]("name").get,
+      mongoDBObject.getAs[String]("email").get,
+      mongoDBObject.getAs[String]("document").get,
+      mongoDBObject.getAs[String]("password").get
+    );
+  }
+}
 
 object User {
+  val collection = MongoFactory.collection
 
   def save(user: User) {
     val mongoObj = buildMongoDbObject(user)
-    MongoFactory.collection.save(mongoObj)
+    collection.save(mongoObj)
   }
 
   def remove(user: User) {
     val mongoObj = buildMongoDbObject(user)
-    MongoFactory.collection.remove(mongoObj)
+    collection.remove(mongoObj)
   }
 
   def update(user: User) {
     val mongoObj = buildMongoDbObject(user)
     var query = MongoDBObject("email" -> user.email)
-    MongoFactory.collection.findAndModify(query, mongoObj)
+    collection.findAndModify(query, mongoObj)
+  }
+
+  def findAll(): ListBuffer[User] = {
+    val mongoDBObjects = collection.find().toList
+    var users = mutable.ListBuffer.empty[User]
+    mongoDBObjects.foreach(user => {
+      users += new User(user)
+    })
+    users
   }
 
   private def buildMongoDbObject(user: User): MongoDBObject = {
