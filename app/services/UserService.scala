@@ -4,7 +4,6 @@ import models.User
 
 import scala.collection.mutable.ListBuffer
 
-
 object UserService {
 
   def saveUser(user: User): Unit = {
