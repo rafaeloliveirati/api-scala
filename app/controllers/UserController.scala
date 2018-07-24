@@ -19,9 +19,10 @@ class UserController @Inject()(cc: ControllerComponents, user: String) extends A
     Ok("ok")
   }
 
-  def removeUser = Action {
+  def removeUser(userId: String) = Action {
+    println(userId)
     val user = new User("Rafael", "rafaoliveira.ti@gmail.com", "09194441642", "123")
-    UserService.saveUser(user)
+    UserService.removeUser(userId)
     Ok("ok")
   }
 

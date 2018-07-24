@@ -26,9 +26,10 @@ object User {
     collection.save(mongoObj)
   }
 
-  def remove(user: User) {
-    val mongoObj = buildMongoDbObject(user)
-    collection.remove(mongoObj)
+  def remove(userId: String) {
+    var query = MongoDBObject("_id" -> new ObjectId(userId))
+    var result = collection.findAndRemove(query)
+    println("result: " + result)
   }
 
   def update(user: User) {

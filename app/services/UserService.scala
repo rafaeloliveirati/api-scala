@@ -15,8 +15,8 @@ object UserService {
     User.findAll()
   }
 
-  def removeUser(user: User): Unit = {
-    User.remove(user)
+  def removeUser(userId: String): Unit = {
+    User.remove(userId)
   }
 
   def updateUser(user: User): Unit = {

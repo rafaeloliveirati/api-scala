@@ -17,6 +17,6 @@ GET           /user                controllers.UserController.findUsers
 
 POST          /user                controllers.UserController.saveUser
 
-DELETE        /user                controllers.UserController.removeUser
+DELETE        /user                controllers.UserController.removeUser(userId: String)
 
       
