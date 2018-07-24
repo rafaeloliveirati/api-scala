@@ -10,7 +10,11 @@ import utils.ApiUtils
 class UserController @Inject()(cc: ControllerComponents, user: String) extends AbstractController(cc) {
 
   def findUsers = Action {
-    Ok(ApiUtils.convertToJson(UserService.findAll()))
+    Ok(ApiUtils.convertListToJson(UserService.findUsers()))
+  }
+
+  def findUsersById(userId: String) = Action {
+    Ok(ApiUtils.convertObjectToJson(UserService.findUsersById(userId)))
   }
 
   def saveUser = Action {

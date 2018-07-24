@@ -16,6 +16,15 @@ class User(val name: String, val email: String, val document: String, val passwo
       mongoDBObject.getAs[String]("password").get
     );
   }
+
+  def this(mongoDBObject: DBObject) {
+    this(
+      mongoDBObject.getAs[String]("name").get,
+      mongoDBObject.getAs[String]("email").get,
+      mongoDBObject.getAs[String]("document").get,
+      mongoDBObject.getAs[String]("password").get
+    );
+  }
 }
 
 object User {
@@ -27,24 +36,33 @@ object User {
   }
 
   def remove(userId: String) {
-    var query = MongoDBObject("_id" -> new ObjectId(userId))
-    var result = collection.findAndRemove(query)
+    val query = MongoDBObject("_id" -> new ObjectId(userId))
+    val result = collection.findAndRemove(query)
     println("result: " + result)
   }
 
   def update(user: User) {
     val mongoObj = buildMongoDbObject(user)
-    var query = MongoDBObject("email" -> user.email)
+    val query = MongoDBObject("email" -> user.email)
     collection.findAndModify(query, mongoObj)
   }
 
-  def findAll(): ListBuffer[User] = {
+  def findUsers(): ListBuffer[User] = {
     val mongoDBObjects = collection.find().toList
-    var users = mutable.ListBuffer.empty[User]
+    val users = mutable.ListBuffer.empty[User]
     mongoDBObjects.foreach(user => {
       users += new User(user)
     })
     users
+  }
+
+  def findUsersById(userId: String): User = {
+    val query = MongoDBObject("_id" -> new ObjectId(userId))
+    val result = collection.findOne(query)
+    println(result)
+    val user = new User("Rafael", "rafaoliveira.ti@gmail.com", "09194441642", "123")
+    user
+    //    val user = new User(result)
   }
 
   private def buildMongoDbObject(user: User): MongoDBObject = {

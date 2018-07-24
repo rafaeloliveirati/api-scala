@@ -11,8 +11,12 @@ object UserService {
     User.save(user)
   }
 
-  def findAll(): ListBuffer[User] = {
-    User.findAll()
+  def findUsers(): ListBuffer[User] = {
+    User.findUsers()
+  }
+
+  def findUsersById(userId: String): User = {
+    User.findUsersById(userId)
   }
 
   def removeUser(userId: String): Unit = {

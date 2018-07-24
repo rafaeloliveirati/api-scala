@@ -9,8 +9,19 @@ import scala.collection.mutable.ListBuffer
 object ApiUtils {
   implicit val formats = DefaultFormats
 
-  def convertToJson(users: ListBuffer[User]): String = {
+  def convertListToJson(users: ListBuffer[User]): String = {
     val jsonString = write(users)
+    jsonString
+  }
+
+  def convertToJson(users: User): String = {
+    val jsonString = write(users)
+    jsonString
+  }
+
+
+  def convertObjectToJson(obj: Object): String = {
+    val jsonString = write(obj)
     jsonString
   }
 }

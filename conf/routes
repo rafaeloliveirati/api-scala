@@ -15,6 +15,8 @@ GET           /assets/*file        controllers.Assets.versioned(path="/public", 
 
 GET           /user                controllers.UserController.findUsers
 
+GET           /user/byId           controllers.UserController.findUsersById(userId: String)
+
 POST          /user                controllers.UserController.saveUser
 
 DELETE        /user                controllers.UserController.removeUser(userId: String)
