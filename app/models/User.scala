@@ -49,13 +49,9 @@ object User {
     collection.findAndModify(query, mongoObj)
   }
 
-  def findUsers(): ListBuffer[User] = {
+  def findUsers(): List[User] = {
     val mongoDBObjects = collection.find().toList
-    val users = mutable.ListBuffer.empty[User]
-    mongoDBObjects.foreach(user => {
-      users += new User(user)
-    })
-    users
+    mongoDBObjects.map(mongo => convertUser(mongo))
   }
 
   def findUsersById(userId: String): User = {
@@ -65,7 +61,17 @@ object User {
     user
   }
 
-  private def buildMongoDbObject(user: User): MongoDBObject = {
+  def convertUser(mongoDBObject: DBObject): User = {
+    val user = new User(
+      mongoDBObject.getAs[String]("name").get,
+      mongoDBObject.getAs[String]("email").get,
+      mongoDBObject.getAs[String]("document").get,
+      mongoDBObject.getAs[String]("password").get
+    )
+    user
+  }
+
+  def buildMongoDbObject(user: User): MongoDBObject = {
     val builder = MongoDBObject.newBuilder
     builder += "name" -> user.name
     builder += "email" -> user.email

@@ -10,7 +10,7 @@ object UserService {
     User.save(user)
   }
 
-  def findUsers(): ListBuffer[User] = {
+  def findUsers(): List[User] = {
     User.findUsers()
   }
 
