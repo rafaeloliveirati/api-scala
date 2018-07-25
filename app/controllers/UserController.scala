@@ -2,6 +2,8 @@ package controllers
 
 import javax.inject._
 import models.User
+import net.liftweb.json._
+import play.api.libs.json.JsValue
 import play.api.mvc._
 import services.UserService
 import utils.ApiUtils
@@ -10,22 +12,27 @@ import utils.ApiUtils
 class UserController @Inject()(cc: ControllerComponents, user: String) extends AbstractController(cc) {
 
   def findUsers = Action {
-    Ok(ApiUtils.convertListToJson(UserService.findUsers()))
+    Ok(ApiUtils.convertToJson(UserService.findUsers()))
   }
 
   def findUsersById(userId: String) = Action {
-    Ok(ApiUtils.convertObjectToJson(UserService.findUsersById(userId)))
+    Ok(ApiUtils.convertToJson(UserService.findUsersById(userId)))
   }
 
-  def saveUser = Action {
-    val user = new User("Rafael", "rafaoliveira.ti@gmail.com", "09194441642", "123")
-    UserService.saveUser(user)
-    Ok("ok")
+  def saveUser = Action { request =>
+    implicit val formats = DefaultFormats
+    request.body.asJson.map { json =>
+      val jValue = JsonParser.parse(json.toString())
+      val user = jValue.extract[User]
+      UserService.saveUser(user)
+      Ok("ok")
+    }.getOrElse {
+      BadRequest("Expecting application/json request body")
+    }
   }
 
   def removeUser(userId: String) = Action {
     println(userId)
-    val user = new User("Rafael", "rafaoliveira.ti@gmail.com", "09194441642", "123")
     UserService.removeUser(userId)
     Ok("ok")
   }
