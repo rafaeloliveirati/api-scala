@@ -1,7 +1,9 @@
 package models
 
 import com.mongodb.casbah.Imports._
+import com.mongodb.casbah.commons.TypeImports
 import config.MongoFactory
+import models.User.collection
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -14,7 +16,7 @@ class User(val name: String, val email: String, val document: String, val passwo
       mongoDBObject.getAs[String]("email").get,
       mongoDBObject.getAs[String]("document").get,
       mongoDBObject.getAs[String]("password").get
-    );
+    )
   }
 
   def this(mongoDBObject: DBObject) {
@@ -23,7 +25,7 @@ class User(val name: String, val email: String, val document: String, val passwo
       mongoDBObject.getAs[String]("email").get,
       mongoDBObject.getAs[String]("document").get,
       mongoDBObject.getAs[String]("password").get
-    );
+    )
   }
 }
 
@@ -57,12 +59,10 @@ object User {
   }
 
   def findUsersById(userId: String): User = {
-    val query = MongoDBObject("_id" -> new ObjectId(userId))
-    val result = collection.findOne(query)
-    println(result)
-    val user = new User("Rafael", "rafaoliveira.ti@gmail.com", "09194441642", "123")
+    val query = MongoDBObject("email" -> new ObjectId(userId))
+    val result = collection.findOne(query).get
+    val user = new User(result)
     user
-    //    val user = new User(result)
   }
 
   private def buildMongoDbObject(user: User): MongoDBObject = {

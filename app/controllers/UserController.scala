@@ -3,7 +3,6 @@ package controllers
 import javax.inject._
 import models.User
 import net.liftweb.json._
-import play.api.libs.json.JsValue
 import play.api.mvc._
 import services.UserService
 import utils.ApiUtils
@@ -25,7 +24,7 @@ class UserController @Inject()(cc: ControllerComponents, user: String) extends A
       val jValue = JsonParser.parse(json.toString())
       val user = jValue.extract[User]
       UserService.saveUser(user)
-      Ok("ok")
+      Ok(s"Usuario ${user.name} cadastrado com sucesso!")
     }.getOrElse {
       BadRequest("Expecting application/json request body")
     }
