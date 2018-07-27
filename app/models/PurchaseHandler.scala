@@ -1,7 +1,11 @@
 package models
 
-object TemplateHandler {
+case class Purchase(transaction: String, value: Double, user: User, template: Template)
 
-  case class Template(name: String, email: String, document: String, password: String)
+object PurchaseHandler {
+
+  def savePurchase(): Unit = {
+    println("salvou")
+  }
 
 }

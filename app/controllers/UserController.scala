@@ -1,26 +1,28 @@
 package controllers
 
+import akka.actor.ActorSystem
 import javax.inject._
-import models.UserHandler.User
+import models.User
 import net.liftweb.json._
 import play.api.mvc._
 import services.UserService
-import utils.ApiUtils
+import utils.ConverterUtils
 
 @Singleton
-class UserController @Inject()(cc: ControllerComponents, user: String) extends AbstractController(cc) {
+class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
   def findUsers = Action {
-    Ok(ApiUtils.convertToJson(UserService.findUsers()))
+    Ok(ConverterUtils.convertToJson(UserService.findUsers()))
   }
 
   def findUsersById(userId: String) = Action {
-    Ok(ApiUtils.convertToJson(UserService.findUsersById(userId)))
+    Ok(ConverterUtils.convertToJson(UserService.findUsersById(userId)))
   }
 
   def saveUser = Action { request =>
     implicit val formats = DefaultFormats
     request.body.asJson.map { json =>
+      //Refatorar Jogar em uma funcao
       val jValue = JsonParser.parse(json.toString())
       val user = jValue.extract[User]
       UserService.saveUser(user)

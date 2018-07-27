@@ -1,7 +1,6 @@
 package services
 
-import models.UserHandler
-import models.UserHandler.User
+import models.{User, UserHandler}
 
 
 object UserService {
@@ -15,7 +14,7 @@ object UserService {
   }
 
   def findUsersById(userId: String): User = {
-    UserHandler.findUsersById(userId)
+    UserHandler.findById(userId)
   }
 
   def removeUser(userId: String): Unit = {

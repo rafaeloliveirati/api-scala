@@ -1,40 +1,28 @@
 package models
 
-import com.mongodb.casbah.Imports._
+import com.mongodb.casbah.Imports.{MongoDBObject, ObjectId}
 import config.MongoFactory
-import utils.ApiUtils
+import utils.ConverterUtils
 
-object UserHandler {
+case class Template(name: String, price: Double, status: String)
 
-  case class User(name: String, email: String, document: String, password: String)
+object TemplateHandler {
 
-  val collection = MongoFactory.collection
+  private val templateCollection = MongoFactory.templateCollection
 
-  def save(user: User) {
-    val mongoObj = ApiUtils.buildMongoDbObject(user)
-    collection.save(mongoObj)
+  def findById(id: String): Template = {
+    val query = MongoDBObject("_id" -> new ObjectId(id))
+    val result = templateCollection.findOne(query).get
+    ConverterUtils.convertMongoDBObjectToTemplate(result)
   }
 
-  def remove(userId: String) {
-    val query = MongoDBObject("_id" -> new ObjectId(userId))
-    collection.findAndRemove(query)
+  def save(template: Template) {
+    val mongoObj = ConverterUtils.buildTemplateToMongoDbObject(template)
+    templateCollection.save(mongoObj)
   }
 
-  def update(user: User) {
-    val mongoObj = ApiUtils.buildMongoDbObject(user)
-    val query = MongoDBObject("email" -> user.email)
-    collection.findAndModify(query, mongoObj)
+  def findTemplates(): List[Template] = {
+    val mongoDBObjects = templateCollection.find().toList
+    mongoDBObjects.map(mongo => ConverterUtils.convertDBObjectToTemplate(mongo))
   }
-
-  def findUsers(): List[User] = {
-    val mongoDBObjects = collection.find().toList
-    mongoDBObjects.map(mongo => ApiUtils.convertDBObject(mongo))
-  }
-
-  def findUsersById(userId: String): User = {
-    val query = MongoDBObject("email" -> new ObjectId(userId))
-    val result = collection.findOne(query).get
-    ApiUtils.convertMongoDBObject(result)
-  }
-
 }

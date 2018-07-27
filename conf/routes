@@ -1,12 +1,18 @@
 
-GET           /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
 
-GET           /user                controllers.UserController.findUsers
+GET           /user                 controllers.UserController.findUsers
 
-GET           /user/byId           controllers.UserController.findUsersById(userId: String)
+GET           /user/byId            controllers.UserController.findUsersById(userId: String)
 
-POST          /user                controllers.UserController.saveUser
+POST          /user                 controllers.UserController.saveUser
 
-DELETE        /user                controllers.UserController.removeUser(userId: String)
+DELETE        /user                 controllers.UserController.removeUser(userId: String)
 
-      
+POST          /purchase             controllers.PurchaseController.savePurchase
+
+GET           /template             controllers.TemplateController.findTemplates
+
+GET           /template/byId        controllers.TemplateController.findTemplateById(templateId: String)
+
+POST          /template             controllers.TemplateController.saveTemplate
