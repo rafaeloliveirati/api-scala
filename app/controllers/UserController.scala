@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject._
-import models.User
+import models.UserHandler.User
 import net.liftweb.json._
 import play.api.mvc._
 import services.UserService

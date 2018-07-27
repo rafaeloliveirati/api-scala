@@ -1,35 +1,12 @@
 package models
 
 import com.mongodb.casbah.Imports._
-import com.mongodb.casbah.commons.TypeImports
 import config.MongoFactory
-import models.User.collection
 
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+object UserHandler {
 
-class User(val name: String, val email: String, val document: String, val password: String) {
+  case class User(name: String, email: String, document: String, password: String)
 
-  def this(mongoDBObject: MongoDBObject) {
-    this(
-      mongoDBObject.getAs[String]("name").get,
-      mongoDBObject.getAs[String]("email").get,
-      mongoDBObject.getAs[String]("document").get,
-      mongoDBObject.getAs[String]("password").get
-    )
-  }
-
-  def this(mongoDBObject: DBObject) {
-    this(
-      mongoDBObject.getAs[String]("name").get,
-      mongoDBObject.getAs[String]("email").get,
-      mongoDBObject.getAs[String]("document").get,
-      mongoDBObject.getAs[String]("password").get
-    )
-  }
-}
-
-object User {
   val collection = MongoFactory.collection
 
   def save(user: User) {
@@ -51,24 +28,32 @@ object User {
 
   def findUsers(): List[User] = {
     val mongoDBObjects = collection.find().toList
-    mongoDBObjects.map(mongo => convertUser(mongo))
+    mongoDBObjects.map(mongo => convertDBObject(mongo))
   }
 
   def findUsersById(userId: String): User = {
     val query = MongoDBObject("email" -> new ObjectId(userId))
     val result = collection.findOne(query).get
-    val user = new User(result)
+    val user = convertMongoDBObject(result)
     user
   }
 
-  def convertUser(mongoDBObject: DBObject): User = {
-    val user = new User(
+  def convertMongoDBObject(mongoDBObject: MongoDBObject): User = {
+    User(
       mongoDBObject.getAs[String]("name").get,
       mongoDBObject.getAs[String]("email").get,
       mongoDBObject.getAs[String]("document").get,
       mongoDBObject.getAs[String]("password").get
     )
-    user
+  }
+
+  def convertDBObject(mongoDBObject: DBObject): User = {
+    User(
+      mongoDBObject.getAs[String]("name").get,
+      mongoDBObject.getAs[String]("email").get,
+      mongoDBObject.getAs[String]("document").get,
+      mongoDBObject.getAs[String]("password").get
+    )
   }
 
   def buildMongoDbObject(user: User): MongoDBObject = {
@@ -79,4 +64,5 @@ object User {
     builder += "password" -> user.password
     builder.result
   }
+
 }

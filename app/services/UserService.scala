@@ -1,28 +1,28 @@
 package services
 
-import models.User
+import models.UserHandler
+import models.UserHandler.User
 
-import scala.collection.mutable.ListBuffer
 
 object UserService {
 
   def saveUser(user: User): Unit = {
-    User.save(user)
+    UserHandler.save(user)
   }
 
   def findUsers(): List[User] = {
-    User.findUsers()
+    UserHandler.findUsers()
   }
 
   def findUsersById(userId: String): User = {
-    User.findUsersById(userId)
+    UserHandler.findUsersById(userId)
   }
 
   def removeUser(userId: String): Unit = {
-    User.remove(userId)
+    UserHandler.remove(userId)
   }
 
   def updateUser(user: User): Unit = {
-    User.update(user)
+    UserHandler.update(user)
   }
 }
