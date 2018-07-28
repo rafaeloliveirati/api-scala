@@ -2,15 +2,23 @@ package services
 
 import com.mongodb.casbah.Imports.ObjectId
 import models._
+import utils.PurchaseUtils
 
 object PurchaseService {
 
-  def savePurchase(): Unit = {
-    val user = User.findById("5b57dfe78432b20718d14ea6")
-    val template = Template.findById("5b5b69508432b22c28583e25")
-    val purchase = Purchase(new ObjectId, "fdsafdsa", 20, user, template)
-    val temp = Template(new ObjectId, "fdsafdas", 1, "ok")
-    //    Template.save(temp)
+  def savePurchase(userId: String, templateId: String): Unit = {
+    val template = Template.findById(templateId)
+    val user = User.findById(userId)
+    if (!PurchaseUtils.canSavePurchase(template)) {
+      print("Erro - Save purchase")
+    }
+    val value = calcPurchaseValue(template.price)
+    val purchase = Purchase(new ObjectId, "1", value, user, template)
     Purchase.savePurchase(purchase)
+  }
+
+  def calcPurchaseValue(templateValue: Double): Double = {
+    //Rule of calc purchase value
+    templateValue + templateValue * 0.10
   }
 }

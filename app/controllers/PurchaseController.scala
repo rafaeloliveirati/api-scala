@@ -8,9 +8,12 @@ import services.PurchaseService
 @Singleton
 class PurchaseController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
-  def savePurchase = Action {
-    PurchaseService.savePurchase()
-    Ok("fdsafds")
+  def savePurchase = Action { request =>
+    val json = request.body.asJson
+    val userId = json.get("userId").toString().replace("\"", "")
+    val templateId = json.get("templateId").toString().replace("\"", "")
+    PurchaseService.savePurchase(userId, templateId)
+    Ok(s"Purchase add success!")
   }
 
 

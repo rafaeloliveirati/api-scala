@@ -17,7 +17,6 @@ object User {
   def save(user: User) {
     val mongoObj = ConverterUtils.buildMongoDbObject(user)
     MongoFactory.userCollection.save(mongoObj)
-    println("fdsafdsa")
   }
 
   def remove(userId: String) {
