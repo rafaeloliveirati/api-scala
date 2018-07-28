@@ -2,10 +2,10 @@ package controllers
 
 import akka.actor.ActorSystem
 import javax.inject._
-import models.{Template, TemplateHandler, User, UserHandler}
+import models.Template
 import net.liftweb.json.{DefaultFormats, JsonParser}
 import play.api.mvc._
-import services.{TemplateService, UserService}
+import services.TemplateService
 import utils.ConverterUtils
 
 @Singleton

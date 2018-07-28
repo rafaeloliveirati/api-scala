@@ -4,25 +4,28 @@ import com.mongodb.casbah.Imports.{MongoDBObject, ObjectId}
 import config.MongoFactory
 import utils.ConverterUtils
 
-case class Template(name: String, price: Double, status: String)
+case class Template(
+                    _id: ObjectId = new ObjectId,
+                     name: String,
+                     price: Double,
+                     status: String
+                   )
 
-object TemplateHandler {
-
-  private val templateCollection = MongoFactory.templateCollection
+object Template {
 
   def findById(id: String): Template = {
     val query = MongoDBObject("_id" -> new ObjectId(id))
-    val result = templateCollection.findOne(query).get
+    val result = MongoFactory.templateCollection.findOne(query).get
     ConverterUtils.convertMongoDBObjectToTemplate(result)
   }
 
   def save(template: Template) {
     val mongoObj = ConverterUtils.buildTemplateToMongoDbObject(template)
-    templateCollection.save(mongoObj)
+    MongoFactory.templateCollection.save(mongoObj)
   }
 
   def findTemplates(): List[Template] = {
-    val mongoDBObjects = templateCollection.find().toList
+    val mongoDBObjects = MongoFactory.templateCollection.find().toList
     mongoDBObjects.map(mongo => ConverterUtils.convertDBObjectToTemplate(mongo))
   }
 }

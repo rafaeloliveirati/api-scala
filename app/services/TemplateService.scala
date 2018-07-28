@@ -1,18 +1,18 @@
 package services
 
-import models.{Template, TemplateHandler}
+import models.Template
 
 object TemplateService {
 
   def saveTemplate(template: Template): Unit = {
-    TemplateHandler.save(template)
+    Template.save(template)
   }
 
   def findById(templateId: String): Template = {
-    TemplateHandler.findById(templateId)
+    Template.findById(templateId)
   }
 
   def findTemplates(): List[Template] = {
-    TemplateHandler.findTemplates()
+    Template.findTemplates()
   }
 }

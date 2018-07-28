@@ -1,27 +1,27 @@
 package services
 
-import models.{User, UserHandler}
+import models.User
 
 
 object UserService {
 
   def saveUser(user: User): Unit = {
-    UserHandler.save(user)
+    User.save(user)
   }
 
   def findUsers(): List[User] = {
-    UserHandler.findUsers()
+    User.findUsers()
   }
 
   def findUsersById(userId: String): User = {
-    UserHandler.findById(userId)
+    User.findById(userId)
   }
 
   def removeUser(userId: String): Unit = {
-    UserHandler.remove(userId)
+    User.remove(userId)
   }
 
   def updateUser(user: User): Unit = {
-    UserHandler.update(user)
+    User.update(user)
   }
 }

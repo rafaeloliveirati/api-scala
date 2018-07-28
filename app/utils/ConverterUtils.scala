@@ -2,7 +2,7 @@ package utils
 
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports._
-import models.{Template, User}
+import models.{Purchase, Template, User}
 import net.liftweb.json.DefaultFormats
 import net.liftweb.json.Serialization.write
 
@@ -16,7 +16,8 @@ object ConverterUtils {
 
 
   def convertMongoDBObject(mongoDBObject: MongoDBObject): User = {
-    new User(
+    User(
+      mongoDBObject.getAs[ObjectId]("_id").get,
       mongoDBObject.getAs[String]("name").get,
       mongoDBObject.getAs[String]("email").get,
       mongoDBObject.getAs[String]("document").get,
@@ -26,6 +27,7 @@ object ConverterUtils {
 
   def convertMongoDBObjectToTemplate(mongoDBObject: DBObject): Template = {
     Template(
+      mongoDBObject.getAs[ObjectId]("_id").get,
       mongoDBObject.getAs[String]("name").get,
       mongoDBObject.getAs[Double]("price").get,
       mongoDBObject.getAs[String]("status").get
@@ -41,8 +43,18 @@ object ConverterUtils {
     builder.result
   }
 
+  def buildMongoDbObjectToPurchase(purchase: Purchase): DBObject = {
+    val builder = MongoDBObject.newBuilder
+    builder += "transaction" -> purchase.transaction
+    builder += "value" -> purchase.value
+    builder += "user" -> purchase.user
+    builder += "template" -> purchase.template
+    builder.result
+  }
+
   def convertDBObject(mongoDBObject: DBObject): User = {
     User(
+      mongoDBObject.getAs[ObjectId]("_id").get,
       mongoDBObject.getAs[String]("name").get,
       mongoDBObject.getAs[String]("email").get,
       mongoDBObject.getAs[String]("document").get,
@@ -52,6 +64,7 @@ object ConverterUtils {
 
   def convertDBObjectToTemplate(mongoDBObject: DBObject): Template = {
     Template(
+      mongoDBObject.getAs[ObjectId]("_id").get,
       mongoDBObject.getAs[String]("name").get,
       mongoDBObject.getAs[Double]("price").get,
       mongoDBObject.getAs[String]("status").get
