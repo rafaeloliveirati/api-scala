@@ -12,13 +12,9 @@ object PurchaseService {
     if (!PurchaseUtils.canSavePurchase(template)) {
       print("Erro - Save purchase")
     }
-    val value = calcPurchaseValue(template.price)
+    val value = PurchaseUtils.calcPurchaseValue(template.price)
     val purchase = Purchase(new ObjectId, "1", value, user, template)
     Purchase.savePurchase(purchase)
   }
 
-  def calcPurchaseValue(templateValue: Double): Double = {
-    //Rule of calc purchase value
-    templateValue + templateValue * 0.10
-  }
 }
