@@ -16,5 +16,4 @@ class PurchaseController @Inject()(system: ActorSystem, cc: ControllerComponents
     Ok(s"Purchase add success!")
   }
 
-
 }

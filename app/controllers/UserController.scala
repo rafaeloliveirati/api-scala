@@ -3,35 +3,28 @@ package controllers
 import akka.actor.ActorSystem
 import javax.inject._
 import models.User
-import net.liftweb.json.Serialization.write
 import net.liftweb.json._
+import play.api.libs.json.Json
 import play.api.mvc._
 import services.UserService
 
 @Singleton
 class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
-  implicit val formats = DefaultFormats
-
   def findUsers = Action {
-    Ok(write(UserService.findUsers()))
+    Ok(Json.toJson(UserService.findUsers()))
   }
 
   def findUsersById(userId: String) = Action {
-    Ok(write(UserService.findUsersById(userId)))
+    Ok(Json.toJson(UserService.findUsersById(userId)))
   }
 
   def saveUser = Action { request =>
     implicit val formats = DefaultFormats
-    request.body.asJson.map { json =>
-      //Refatorar Jogar em uma funcao
-      val jValue = JsonParser.parse(json.toString())
-      val user = jValue.extract[User]
-      UserService.saveUser(user)
-      Ok(s"Usuario ${user.name} cadastrado com sucesso!")
-    }.getOrElse {
-      BadRequest("Expecting application/json request body")
-    }
+    val jValue = JsonParser.parse(request.body.asJson.get.toString())
+    val user = jValue.extract[User]
+    UserService.saveUser(user)
+    Ok(s"User ${user.name} add with success!")
   }
 
   def removeUser(userId: String) = Action {
