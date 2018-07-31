@@ -8,12 +8,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-case class User(
-                 name: String,
-                 email: String,
-                 document: String,
-                 password: String
-               ) {
+case class User(name: String, email: String, document: String, password: String) {
   val _id: ObjectId = new ObjectId
 }
 
@@ -21,7 +16,6 @@ object User {
 
   def save(user: User) {
     val mongoObj = buildMongoDbObject(user)
-    val mongoObj2 = userWrites(user)
     MongoFactory.userCollection.save(mongoObj)
   }
 

@@ -6,12 +6,7 @@ import config.MongoFactory
 import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.{Json, Reads, Writes, __}
 
-case class Purchase(
-                     transaction: String,
-                     value: Double,
-                     user: User,
-                     template: Template
-                   ) {
+case class Purchase(transaction: String, value: Double, user: User, template: Template) {
   val _id: ObjectId = new ObjectId
 }
 
