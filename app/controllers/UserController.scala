@@ -3,20 +3,22 @@ package controllers
 import akka.actor.ActorSystem
 import javax.inject._
 import models.User
+import net.liftweb.json.Serialization.write
 import net.liftweb.json._
 import play.api.mvc._
 import services.UserService
-import utils.ConverterUtils
 
 @Singleton
 class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
+  implicit val formats = DefaultFormats
+
   def findUsers = Action {
-    Ok(ConverterUtils.convertToJson(UserService.findUsers()))
+    Ok(write(UserService.findUsers()))
   }
 
   def findUsersById(userId: String) = Action {
-    Ok(ConverterUtils.convertToJson(UserService.findUsersById(userId)))
+    Ok(write(UserService.findUsersById(userId)))
   }
 
   def saveUser = Action { request =>

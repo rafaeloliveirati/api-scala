@@ -1,6 +1,5 @@
 package services
 
-import com.mongodb.casbah.Imports.ObjectId
 import models._
 import utils.PurchaseUtils
 
@@ -13,7 +12,7 @@ object PurchaseService {
       print("Erro - Save purchase")
     }
     val value = PurchaseUtils.calcPurchaseValue(template.price)
-    val purchase = Purchase(new ObjectId, "1", value, user, template)
+    val purchase = Purchase("1", value, user, template)
     Purchase.savePurchase(purchase)
   }
 

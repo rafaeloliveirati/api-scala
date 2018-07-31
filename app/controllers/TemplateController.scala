@@ -3,13 +3,15 @@ package controllers
 import akka.actor.ActorSystem
 import javax.inject._
 import models.Template
+import net.liftweb.json.Serialization.write
 import net.liftweb.json.{DefaultFormats, JsonParser}
 import play.api.mvc._
 import services.TemplateService
-import utils.ConverterUtils
 
 @Singleton
 class TemplateController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
+
+  implicit val formats = DefaultFormats
 
   def saveTemplate = Action { request =>
     implicit val formats = DefaultFormats
@@ -25,11 +27,11 @@ class TemplateController @Inject()(system: ActorSystem, cc: ControllerComponents
   }
 
   def findTemplateById(templateId: String) = Action {
-    Ok(ConverterUtils.convertToJson(TemplateService.findById(templateId)))
+    Ok(write(TemplateService.findById(templateId)))
   }
 
   def findTemplates = Action {
-    Ok(ConverterUtils.convertToJson(TemplateService.findTemplates()))
+    Ok(write(TemplateService.findTemplates()))
   }
 
 }
