@@ -1,55 +1,26 @@
 package models
 
-import com.mongodb.casbah.Imports.{MongoDBObject, ObjectId}
-import com.mongodb.casbah.commons.TypeImports.DBObject
 import config.MongoFactory
-import play.api.libs.functional.syntax.{unlift, _}
-import play.api.libs.json.Reads._
-import play.api.libs.json.{Json, Reads, Writes, __}
+import org.bson.types.ObjectId
+import org.mongodb.scala.model.Filters.equal
 
-case class Template(name: String, price: Double, status: String) {
-  val _id: ObjectId = new ObjectId
+import scala.concurrent.Future
+
+case class Template(_id: ObjectId = new ObjectId, name: String, price: Double, status: String) {
 }
 
 object Template {
 
-  def findById(id: String): Template = {
-    val query = MongoDBObject("_id" -> new ObjectId(id))
-    val dbObject = MongoFactory.templateCollection.findOne(query).get
-    parseDbObjectToTemplate(dbObject)
+  def findById(id: String): Future[Seq[Template]] = {
+    MongoFactory.templateCollection.find(equal("_id", id)).toFuture()
   }
 
   def save(template: Template) {
-    val mongoObj = buildTemplateToMongoDbObject(template)
-    MongoFactory.templateCollection.save(mongoObj)
+    MongoFactory.templateCollection.insertOne(template)
   }
 
-  def findTemplates(): List[Template] = {
-    val mongoDBObjects = MongoFactory.templateCollection.find().toList
-    mongoDBObjects.map(dbObject => parseDbObjectToTemplate(dbObject))
+  def findTemplates(): Future[Seq[Template]] = {
+    MongoFactory.templateCollection.find().toFuture()
   }
 
-  implicit val templatesWrites: Writes[Template] = (
-    (__ \ "name").write[String] and
-      (__ \ "price").write[Double] and
-      (__ \ "status").write[String]
-    ) (unlift(Template.unapply))
-
-  implicit val templateReads: Reads[Template] = (
-    (__ \ "name").read[String] and
-      (__ \ "price").read[Double] and
-      (__ \ "status").read[String]
-    ) (Template.apply _)
-
-  def parseDbObjectToTemplate(dbObject: DBObject): Template = {
-    templateReads.reads(Json.parse(dbObject.toString)).get
-  }
-
-  def buildTemplateToMongoDbObject(template: Template): DBObject = {
-    val builder = MongoDBObject.newBuilder
-    builder += "name" -> template.name
-    builder += "price" -> template.price
-    builder += "status" -> template.status
-    builder.result
-  }
 }

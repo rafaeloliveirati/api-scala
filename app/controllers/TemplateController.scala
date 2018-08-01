@@ -16,15 +16,17 @@ class TemplateController @Inject()(system: ActorSystem, cc: ControllerComponents
     val jValue = JsonParser.parse(request.body.asJson.get.toString())
     val template = jValue.extract[Template]
     TemplateService.saveTemplate(template)
-    Ok(s"Usuario ${template.name} cadastrado com sucesso!")
+    Ok(s"User ${template.name} add with success!")
   }
 
   def findTemplateById(templateId: String) = Action {
-    Ok(Json.toJson(TemplateService.findById(templateId)))
+    //Json.toJson(TemplateService.findById(templateId))
+    Ok("fdsfds")
   }
 
   def findTemplates = Action {
-    Ok(Json.toJson(TemplateService.findTemplates()))
+    //Json.toJson(TemplateService.findTemplates())
+    Ok("fdafdsa")
   }
 
 }

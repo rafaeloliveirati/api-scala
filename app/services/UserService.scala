@@ -2,6 +2,8 @@ package services
 
 import models.User
 
+import scala.concurrent.Future
+
 
 object UserService {
 
@@ -9,19 +11,16 @@ object UserService {
     User.save(user)
   }
 
-  def findUsers(): List[User] = {
+  def findUsers(): Future[Seq[User]] = {
     User.findUsers()
   }
 
-  def findUsersById(userId: String): User = {
-    User.findById(userId)
+  def findUsersById(id: String): Future[Seq[User]] = {
+    User.findById(id)
   }
 
-  def removeUser(userId: String): Unit = {
-    User.remove(userId)
+  def removeUser(id: String): Unit = {
+    User.remove(id)
   }
 
-  def updateUser(user: User): Unit = {
-    User.update(user)
-  }
 }

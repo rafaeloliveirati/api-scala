@@ -15,7 +15,8 @@ libraryDependencies ++= {
     "org.slf4j" % "slf4j-simple" % "1.6.4",
     "com.google.code.gson" % "gson" % "2.2.4",
     "net.liftweb" %% "lift-webkit" % liftVersion % "compile",
-    "ch.qos.logback" % "logback-classic" % "1.2.3"
+    "ch.qos.logback" % "logback-classic" % "1.2.3",
+    "org.mongodb.scala" %% "mongo-scala-driver" % "2.4.0"
   )
 }
 

@@ -1,6 +1,7 @@
 package controllers
 
-import akka.actor.ActorSystem
+import actors.UserActor
+import akka.actor.{ActorSystem, Props}
 import javax.inject._
 import models.User
 import net.liftweb.json._
@@ -12,11 +13,15 @@ import services.UserService
 class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
   def findUsers = Action {
-    Ok(Json.toJson(UserService.findUsers()))
+    val userActor = system.actorOf(Props[UserActor], "userActor")
+    userActor ! "hey there"
+    //Json.toJson(UserService.findUsers())
+    Ok("fdsfds")
   }
 
   def findUsersById(userId: String) = Action {
-    Ok(Json.toJson(UserService.findUsersById(userId)))
+    //Json.toJson(UserService.findUsersById(userId))
+    Ok("dsfdas")
   }
 
   def saveUser = Action { request =>
@@ -28,7 +33,6 @@ class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) ex
   }
 
   def removeUser(userId: String) = Action {
-    println(userId)
     UserService.removeUser(userId)
     Ok("ok")
   }
