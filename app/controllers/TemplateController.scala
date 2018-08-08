@@ -8,23 +8,26 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import services.TemplateService
 
+import scala.concurrent.Future
+
 @Singleton
 class TemplateController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
-  def saveTemplate = Action { request =>
+  def saveTemplate: Action[AnyContent] = Action.async { implicit request =>
     implicit val formats = DefaultFormats
     val jValue = JsonParser.parse(request.body.asJson.get.toString())
     val template = jValue.extract[Template]
     TemplateService.saveTemplate(template)
-    Ok(s"Usuario ${template.name} cadastrado com sucesso!")
+    Future.successful(Ok(s"Template ${template.name} added successfully!"))
   }
 
-  def findTemplateById(templateId: String) = Action {
-    Ok(Json.toJson(TemplateService.findById(templateId)))
+  def findTemplateById(templateId: String): Action[AnyContent] = Action.async {
+    Future.successful(Ok(Json.toJson(TemplateService.findById(templateId))))
   }
 
-  def findTemplates = Action {
-    Ok(Json.toJson(TemplateService.findTemplates()))
+  def findTemplates: Action[AnyContent] = Action.async {
+    Future.successful(Ok(Json.toJson(TemplateService.findTemplates())))
+    )
   }
 
 }

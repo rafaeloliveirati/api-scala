@@ -8,29 +8,30 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import services.UserService
 
+import scala.concurrent._
+
 @Singleton
 class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
-  def findUsers = Action {
-    Ok(Json.toJson(UserService.findUsers()))
+  def findUsers: Action[AnyContent] = Action.async {
+    Future.successful(Ok(Json.toJson(UserService.findUsers())))
   }
 
-  def findUsersById(userId: String) = Action {
-    Ok(Json.toJson(UserService.findUsersById(userId)))
+  def findUsersById(userId: String): Action[AnyContent] = Action.async {
+    Future.successful(Ok(Json.toJson(UserService.findUsersById(userId))))
   }
 
-  def saveUser = Action { request =>
+  def saveUser: Action[AnyContent] = Action.async { implicit request =>
     implicit val formats = DefaultFormats
     val jValue = JsonParser.parse(request.body.asJson.get.toString())
     val user = jValue.extract[User]
     UserService.saveUser(user)
-    Ok(s"User ${user.name} add with success!")
+    Future.successful(Ok(s"User ${user.name} added successfully!"))
   }
 
-  def removeUser(userId: String) = Action {
-    println(userId)
+  def removeUser(userId: String): Action[AnyContent] = Action.async {
     UserService.removeUser(userId)
-    Ok("ok")
+    Future.successful(Ok(s"User ${userId} removed successfully!"))
   }
 
 }
