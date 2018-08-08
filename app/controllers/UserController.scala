@@ -3,8 +3,8 @@ package controllers
 import akka.actor.ActorSystem
 import javax.inject._
 import models.User
-import net.liftweb.json._
-import play.api.libs.json.Json
+import play.api.Logger
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import services.UserService
 
@@ -14,19 +14,26 @@ import scala.concurrent._
 class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
   def findUsers: Action[AnyContent] = Action.async {
-    Future.successful(Ok(Json.toJson(UserService.findUsers())))
+    val users = UserService.findUsers()
+    Future.successful(Ok(Json.toJson(users)))
   }
 
   def findUsersById(userId: String): Action[AnyContent] = Action.async {
-    Future.successful(Ok(Json.toJson(UserService.findUsersById(userId))))
+    val user = UserService.findUsersById(userId).getOrElse(throw new Exception("User not found"))
+    Future.successful(Ok(Json.toJson(user)))
   }
 
   def saveUser: Action[AnyContent] = Action.async { implicit request =>
-    implicit val formats = DefaultFormats
-    val jValue = JsonParser.parse(request.body.asJson.get.toString())
-    val user = jValue.extract[User]
-    UserService.saveUser(user)
-    Future.successful(Ok(s"User ${user.name} added successfully!"))
+    request.body.asJson.get.validate[User] match {
+      case user: JsSuccess[User] => {
+        UserService.saveUser(user.get)
+        Future.successful(Ok(s"User ${user.get.name} added successfully!"))
+      }
+      case e: JsError => {
+        Logger.info("Error parsing User")
+        Future.successful(Ok("Error parsing User!"))
+      }
+    }
   }
 
   def removeUser(userId: String): Action[AnyContent] = Action.async {

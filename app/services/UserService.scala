@@ -13,7 +13,7 @@ object UserService {
     User.findUsers()
   }
 
-  def findUsersById(userId: String): User = {
+  def findUsersById(userId: String): Option[User] = {
     User.findById(userId)
   }
 

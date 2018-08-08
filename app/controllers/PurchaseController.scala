@@ -14,8 +14,7 @@ class PurchaseController @Inject()(system: ActorSystem, cc: ControllerComponents
     val json = request.body.asJson
     val userId = json.get("userId").toString().replace("\"", "")
     val templateId = json.get("templateId").toString().replace("\"", "")
-    PurchaseService.savePurchase(userId, templateId)
-    Future.successful(Ok(s"Purchase saved successfully!"))
+    Future.successful(Ok(PurchaseService.savePurchase(userId, templateId)))
   }
 
 }

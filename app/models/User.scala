@@ -4,6 +4,7 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.TypeImports.DBObject
 import config.MongoFactory
 import org.bson.types.ObjectId
+import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -32,10 +33,10 @@ object User {
 
   def findUsers(): List[User] = {
     val mongoDBObjects = MongoFactory.userCollection.find().toList
-    mongoDBObjects.map(dbObject => parseDbObjectToUser(dbObject))
+    mongoDBObjects.map(dbObject => parseDbObjectToUser(dbObject).get)
   }
 
-  def findById(userId: String): User = {
+  def findById(userId: String): Option[User] = {
     val query = MongoDBObject("_id" -> new ObjectId(userId))
     val dbObject = MongoFactory.userCollection.findOne(query).get
     parseDbObjectToUser(dbObject)
@@ -55,8 +56,17 @@ object User {
       (__ \ "password").read[String]
     ) (User.apply _)
 
-  def parseDbObjectToUser(dbObject: DBObject): User = {
-    userReads.reads(Json.parse(dbObject.toString)).get
+  def parseDbObjectToUser(dbObject: DBObject): Option[User] = {
+    val json = Json.parse(dbObject.toString)
+    json.validate[User] match {
+      case user: JsSuccess[User] => {
+        Some(user.get)
+      }
+      case _: JsError => {
+        Logger.info("Error parsing User")
+        None
+      }
+    }
   }
 
   def buildMongoDbObject(user: User): MongoDBObject = {

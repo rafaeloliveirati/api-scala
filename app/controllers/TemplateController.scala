@@ -3,8 +3,8 @@ package controllers
 import akka.actor.ActorSystem
 import javax.inject._
 import models.Template
-import net.liftweb.json.{DefaultFormats, JsonParser}
-import play.api.libs.json.Json
+import play.api.Logger
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import services.TemplateService
 
@@ -14,20 +14,26 @@ import scala.concurrent.Future
 class TemplateController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
   def saveTemplate: Action[AnyContent] = Action.async { implicit request =>
-    implicit val formats = DefaultFormats
-    val jValue = JsonParser.parse(request.body.asJson.get.toString())
-    val template = jValue.extract[Template]
-    TemplateService.saveTemplate(template)
-    Future.successful(Ok(s"Template ${template.name} added successfully!"))
+    request.body.asJson.get.validate[Template] match {
+      case template: JsSuccess[Template] => {
+        TemplateService.saveTemplate(template.get)
+        Future.successful(Ok(s"Template ${template.get.name} added successfully!"))
+      }
+      case e: JsError => {
+        Logger.info("Error parsing Template")
+        Future.successful(Ok("Error parsing Template!"))
+      }
+    }
   }
 
   def findTemplateById(templateId: String): Action[AnyContent] = Action.async {
-    Future.successful(Ok(Json.toJson(TemplateService.findById(templateId))))
+    val template = TemplateService.findById(templateId).getOrElse(throw new Exception("Template not found"))
+    Future.successful(Ok(Json.toJson(template)))
   }
 
   def findTemplates: Action[AnyContent] = Action.async {
-    Future.successful(Ok(Json.toJson(TemplateService.findTemplates())))
-    )
+    val templates = TemplateService.findTemplates()
+    Future.successful(Ok(Json.toJson(templates)))
   }
 
 }

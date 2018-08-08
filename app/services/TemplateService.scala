@@ -8,7 +8,7 @@ object TemplateService {
     Template.save(template)
   }
 
-  def findById(templateId: String): Template = {
+  def findById(templateId: String): Option[Template] = {
     Template.findById(templateId)
   }
 
