@@ -1,5 +1,6 @@
 package models
 
+import akka.actor.Actor
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.TypeImports.DBObject
 import config.MongoFactory
@@ -76,6 +77,16 @@ object User {
     builder += "document" -> user.document
     builder += "password" -> user.password
     builder.result
+  }
+}
+
+class UserActor extends Actor {
+  def receive = {
+    case _ =>
+      sender() ! "Hello, "
+    case message: String =>
+      println(s"Message received from ${sender.path.name}, message = $message")
+    case User => println("Response when forwarded by USER")
   }
 }
 
