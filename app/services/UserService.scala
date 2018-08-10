@@ -9,8 +9,8 @@ object UserService {
     User.save(user)
   }
 
-  def findUsers(): List[User] = {
-    User.findUsers()
+  def findUsers: List[User] = {
+    User.findUsers
   }
 
   def findUsersById(userId: String): Option[User] = {

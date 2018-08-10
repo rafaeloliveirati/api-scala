@@ -1,8 +1,9 @@
 package controllers
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor._
 import javax.inject._
-import models.{User, UserActor}
+import models.UserActorObject.FIND_USER
+import models.{User, UserActorObject}
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
@@ -14,11 +15,9 @@ import scala.concurrent._
 class UserController @Inject()(system: ActorSystem, cc: ControllerComponents) extends AbstractController(cc) {
 
   def findUsers: Action[AnyContent] = Action.async {
-    val actorSystem = ActorSystem("ActorSystem")
-    val actor = actorSystem.actorOf(Props[UserActor], "RootActor")
-    actor ! "Hello"
+    UserActorObject.userActor ! FIND_USER
 
-    //    val users = UserService.findUsers()
+    //    val users = UserService.findUsers
     //    Future.successful(Ok(Json.toJson(users)))
     Future.successful(Ok("fdasfds"))
   }

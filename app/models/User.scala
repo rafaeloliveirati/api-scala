@@ -1,9 +1,10 @@
 package models
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorSystem, Props}
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.TypeImports.DBObject
 import config.MongoFactory
+import models.UserActorObject.{FIND_USER, SAVE_USER}
 import org.bson.types.ObjectId
 import play.api.Logger
 import play.api.libs.functional.syntax._
@@ -32,7 +33,7 @@ object User {
     MongoFactory.userCollection.findAndModify(query, mongoObj)
   }
 
-  def findUsers(): List[User] = {
+  def findUsers: List[User] = {
     val mongoDBObjects = MongoFactory.userCollection.find().toList
     mongoDBObjects.map(dbObject => parseDbObjectToUser(dbObject).get)
   }
@@ -80,13 +81,27 @@ object User {
   }
 }
 
-class UserActor extends Actor {
-  def receive = {
-    case _ =>
-      sender() ! "Hello, "
-    case message: String =>
-      println(s"Message received from ${sender.path.name}, message = $message")
-    case User => println("Response when forwarded by USER")
-  }
+object UserActorObject {
+  private val actorSystem = ActorSystem("userActorSystem")
+  val userActor = actorSystem.actorOf(Props[UserActor], "teste")
+
+  case object SAVE_USER
+
+  case object FIND_USER
+
 }
 
+class UserActor extends Actor {
+
+  def receive = {
+    case "teste" ⇒
+      println("fdsafsdfdasfdsaf")
+    case SAVE_USER =>
+      sender ! User.findUsers
+    case FIND_USER =>
+      println("find")
+      sender ! User.findUsers
+    case _ ⇒
+      println("anything")
+  }
+}
